@@ -55,7 +55,7 @@ setUsertype(String? userType){
 
 String getUserType(){
     if(_preferences != null){
-      return  _preferences!.getString('password') ?? "";
+      return  _preferences!.getString('userType') ?? "";
     }
     return "";
 

@@ -10,7 +10,7 @@ int ?id ;
 String ?catagoryName ; 
 DateTime? createdDateTime;
 
-Catagory(this.id,this.catagoryName,this.createdDateTime);
+Catagory();
 
 
 Catagory.fromMap (Map<dynamic,dynamic> map){
