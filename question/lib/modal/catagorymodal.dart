@@ -28,14 +28,14 @@ class catagorymodal extends StatelessWidget {
           ),
 
           // SelectableText("Your Phone Id: ${settingsViewModel.macAddress??""}"),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           RoundedButton(
             press: () {
               _onsave();
               Navigator.pop(context);
-              refreshContactList();
+           
             },
             text: 'Save',
             //: ButtonState.idle,
@@ -56,11 +56,7 @@ class catagorymodal extends StatelessWidget {
       return 2;
     }
   }
-    refreshContactList() async {
-    List<Catagory> x = await _dbHelper.fetchCatagory();
-    
-    _catagory= x;
-  ;
   
-  }
+  
+  
 }

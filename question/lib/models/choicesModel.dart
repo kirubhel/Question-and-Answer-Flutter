@@ -2,7 +2,7 @@ class Choise {
 
 
 
-static const tblUser = 'Choise';
+static const tblChoice = 'Choise';
 
 static const colId = 'id';
 
@@ -10,7 +10,7 @@ static const colQuestionId = 'questionId';
 static const colChoise = 'choise';
 static const colCreatedDateTime = 'createdDate';
 
-Choise(this.questionId,this.choise);
+Choise();
 
 int? id ; 
 

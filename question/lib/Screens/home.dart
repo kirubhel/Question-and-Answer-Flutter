@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
     CatagoryPage(),
     SubCatagoryPage(),
     QuestionPage(),
-    ChoicePage(),
+    
     UsersAnswerPage()
   ];
   @override
@@ -44,13 +44,17 @@ class _HomePageState extends State<HomePage> {
 
     title = _userTpe == "UserType.admin" ? "Admin Page" : "User Page";
     return Scaffold(
+     backgroundColor: kPrimaryLightColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text(title),
         backgroundColor: kPrimaryColor,
       ),
       drawer: Drawer(
-          child: ListView(padding: EdgeInsets.zero, children: [
+        
+          child: ListView(
+            
+            padding: EdgeInsets.zero, children: [
         Container(
           margin: const EdgeInsets.only(bottom: 8.0),
           child: DrawerHeader(
@@ -58,7 +62,9 @@ class _HomePageState extends State<HomePage> {
               color: kPrimaryColor,
             ),
             child: Column(
+              
               children: [
+                
                 SizedBox.fromSize(
                   size: Size.square(72),
                   child: CircleAvatar(
@@ -150,24 +156,13 @@ class _HomePageState extends State<HomePage> {
           label: "Question",
           icon: Icons.question_answer_outlined,
         ),
+      
         _buildDrawerActionItems(
           context,
           isSelected: _currentIndex == 4,
           onPressed: () => {
             setState(() {
               _currentIndex = 4;
-              Navigator.pop(context);
-            })
-          },
-          label: "Choices",
-          icon: Icons.multiple_stop_outlined,
-        ),
-        _buildDrawerActionItems(
-          context,
-          isSelected: _currentIndex == 5,
-          onPressed: () => {
-            setState(() {
-              _currentIndex = 5;
               Navigator.pop(context);
             })
           },
@@ -191,20 +186,19 @@ class _HomePageState extends State<HomePage> {
       ])),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: kPrimaryLightColor,
         fixedColor: kPrimaryColor,
         items: [
           BottomNavigationBarItem(
-              label:"U", icon: Icon(Icons.people_alt_outlined)),
+              label:"Users", icon: Icon(Icons.people_alt_outlined)),
                BottomNavigationBarItem(
-              label: "C", icon: Icon(Icons.category_outlined)),
+              label: "Catagory", icon: Icon(Icons.category_outlined)),
                BottomNavigationBarItem(
-              label: "SC", icon: Icon(Icons.category_outlined)),
+              label: "Sub Catagory", icon: Icon(Icons.category_outlined)),
           BottomNavigationBarItem(
-              label: "Q", icon: Icon(Icons.question_answer_outlined)),
-                BottomNavigationBarItem(
-              label: "Ch", icon: Icon(Icons.multiple_stop_outlined)),
-          BottomNavigationBarItem(
-              label: "UA", icon: Icon(Icons.replay_10_outlined)),
+              label: "Question", icon: Icon(Icons.question_answer_outlined)),
+            BottomNavigationBarItem(
+              label: "Users Answers", icon: Icon(Icons.replay_10_outlined)),
         ],
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -224,10 +218,8 @@ class _HomePageState extends State<HomePage> {
                 title = "Question";
                 break;
 
-              case 4:
-                title = "Choices";
-                break;
-                case 5:
+            
+                case 4:
                 title = "Users Answer";
                 break;
            

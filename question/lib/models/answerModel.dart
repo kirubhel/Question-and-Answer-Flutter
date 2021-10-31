@@ -2,7 +2,7 @@ class Answer {
 
 
 
-static const tblUser = 'Answer';
+static const tblAnswer = 'Answer';
 
 static const colId = 'id';
 static const colUserId = 'userId';
