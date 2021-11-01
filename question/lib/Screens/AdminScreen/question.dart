@@ -8,11 +8,13 @@ import 'package:question/modal/questionModal.dart';
 import 'package:question/models/catagoryModel.dart';
 import 'package:question/models/choicesModel.dart';
 import 'package:question/models/item.dart';
+import 'package:question/models/questioanswer.dart';
 import 'package:question/models/questionModel.dart';
 import 'package:question/util/databaseHelper.dart';
 
 Databasehelper _dbHelper = Databasehelper.instance;
 List<Question> _question = [];
+
 List<Choise> _choice = [];
 
 class QuestionPage extends StatefulWidget {
@@ -61,156 +63,189 @@ class _QuestionPage extends State<QuestionPage> {
               color: kPrimaryColor,
             ),
           )),
-      Container(
-          child: RefreshIndicator(
-        onRefresh: () => refreshContactList(),
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _question.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(children: [
-              Card(
-                  elevation: 8.0,
-                  margin:
-                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(color: kPrimaryLightColor),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          leading: Container(
-                            padding: EdgeInsets.only(right: 12.0),
-                            decoration: new BoxDecoration(
-                                border: new Border(
-                                    right: new BorderSide(
-                                        width: 1.0, color: kPrimaryColor))),
-                            child: Icon(Icons.question_answer_outlined,
-                                color: kPrimaryColor),
-                          ),
-                          title: Text(
-                            _question[index].question.toString(),
-                            style: const TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  Text(_question[index].elapsedTime.toString(),
-                                      style: TextStyle(color: kPrimaryColor)),
-                                  Text(
-                                      _question[index]
-                                                  .timeMeasurment
-                                                  .toString() ==
-                                              "TimeMeasurment.second"
-                                          ? " Second"
-                                          : _question[index].timeMeasurment ==
-                                                  TimeMeasurment.minute
-                                              ? " Minute"
-                                              : " Hour",
+      SizedBox(
+          height: MediaQuery.of(context).size.height * 0.675,
+          child: Container(
+              child: RefreshIndicator(
+            onRefresh: () => refreshContactList(),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: _question.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(children: [
+                  Card(
+                      elevation: 8.0,
+                      margin: new EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration:
+                                BoxDecoration(color: kPrimaryLightColor),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10.0),
+                              leading: Container(
+                                padding: EdgeInsets.only(right: 12.0),
+                                decoration: new BoxDecoration(
+                                    border: new Border(
+                                        right: new BorderSide(
+                                            width: 1.0, color: kPrimaryColor))),
+                                child: Icon(Icons.question_answer_outlined,
+                                    color: kPrimaryColor),
+                              ),
+                              title: Text(
+                                _question[index].question.toString(),
+                                style: const TextStyle(
+                                    color: kPrimaryColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text(
+                                          _question[index]
+                                              .elapsedTime
+                                              .toString(),
+                                          style:
+                                              TextStyle(color: kPrimaryColor)),
+                                      Text(
+                                          _question[index]
+                                                      .timeMeasurment
+                                                      .toString() ==
+                                                  "TimeMeasurment.second"
+                                              ? " Second"
+                                              : _question[index]
+                                                          .timeMeasurment ==
+                                                      TimeMeasurment.minute
+                                                  ? " Minute"
+                                                  : " Hour",
+                                          style:
+                                              TextStyle(color: kPrimaryColor)),
+                                    ],
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        DateFormat('yyyy-MM-dd – kk:mm')
+                                            .format(_question[index]
+                                                .createdDateTime!)
+                                            .toString(),
+                                        style: TextStyle(color: kPrimaryColor)),
+                                  ),
+                                  Text("Answer : ${_question[index].answerId}",
                                       style: TextStyle(color: kPrimaryColor))
                                 ],
                               ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                    DateFormat('yyyy-MM-dd – kk:mm')
-                                        .format(
-                                            _question[index].createdDateTime!)
-                                        .toString(),
-                                    style: TextStyle(color: kPrimaryColor)),
-                              )
-                            ],
+                              trailing: IconButton(
+                                icon: Icon(Icons.add_box_outlined,
+                                    color: kPrimaryColor),
+                                onPressed: () => {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                            child: new choicemodal(
+                                                _question[index].id!));
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10.0),
+                                              topRight: Radius.circular(10.0))))
+                                },
+                              ),
+                              onTap: () => {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom),
+                                          child: new answeremodal(
+                                              _question[index].id!));
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10.0),
+                                            topRight: Radius.circular(10.0))))
+                              },
+                            ),
                           ),
-                          trailing: IconButton(
-                            icon: Icon(Icons.add_box_outlined,
-                                color: kPrimaryColor),
-                            onPressed: () => {
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom),
-                                        child: new choicemodal(
-                                            _question[index].id!));
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0))))
-                            },
-                          ),
-                          onTap: () => {},
-                        ),
-                      ),
-                      ListView.builder(
-                          itemCount: _question[index].choices!.length,
-                          physics: ClampingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index2) {
-                            return Card(
-                                elevation: 8.0,
-                                margin: new EdgeInsets.symmetric(
-                                    horizontal: 15.0, vertical: 10.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: kPrimaryLightColor),
-                                      child: ListTile(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 10.0),
-                                        leading: Container(
-                                          padding: EdgeInsets.only(right: 12.0),
-                                          decoration: new BoxDecoration(
-                                              border: new Border(
-                                                  right: new BorderSide(
-                                                      width: 1.0,
-                                                      color: kPrimaryColor))),
-                                          child: Text((index2 + 1).toString(),
-                                              style: TextStyle(
-                                                  color: kPrimaryColor)),
+                          ListView.builder(
+                              itemCount: _question[index].choices!.length,
+                              physics: ClampingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index2) {
+                                return Card(
+                                    elevation: 8.0,
+                                    margin: new EdgeInsets.symmetric(
+                                        horizontal: 15.0, vertical: 10.0),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              color: kPrimaryLightColor),
+                                          child: ListTile(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 20.0,
+                                                    vertical: 10.0),
+                                            leading: Container(
+                                              padding:
+                                                  EdgeInsets.only(right: 12.0),
+                                              decoration: new BoxDecoration(
+                                                  border: new Border(
+                                                      right: new BorderSide(
+                                                          width: 1.0,
+                                                          color:
+                                                              kPrimaryColor))),
+                                              child: Text(
+                                                  (index2 + 1).toString(),
+                                                  style: TextStyle(
+                                                      color: kPrimaryColor)),
+                                            ),
+                                            title: Text(
+                                              _question[index]
+                                                  .choices![index2]
+                                                  .choise
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: kPrimaryColor,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            trailing: IconButton(
+                                              icon: Icon(Icons.delete_outlined,
+                                                  color: kPrimaryColor),
+                                              onPressed: () => {
+                                                _deletechoice(_question[index]
+                                                    .choices![index2]
+                                                    .id)
+                                              },
+                                            ),
+                                            onTap: () => {},
+                                          ),
                                         ),
-                                        title: Text(
-                                          _question[index]
-                                              .choices![index2]
-                                              .choise
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: kPrimaryColor,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        trailing: IconButton(
-                                          icon: Icon(Icons.delete_outlined,
-                                              color: kPrimaryColor),
-                                          onPressed: () => {
-                                            _deletechoice(_question[index]
-                                                .choices![index2]
-                                                .id)
-                                          },
-                                        ),
-                                        onTap: () => {},
-                                      ),
-                                    ),
-                                  ],
-                                ));
-                          })
-                    ],
-                  ))
-            ]);
-          },
-        ),
-      ))
+                                      ],
+                                    ));
+                              })
+                        ],
+                      ))
+                ]);
+              },
+            ),
+          )))
     ]));
     ;
   }
@@ -287,6 +322,56 @@ class choicemodal extends StatelessWidget {
     ca.questionId = yourData;
     ca.createdDate = DateTime.now();
     var x = _dbHelper.insertChoise(ca);
+    if (x != null) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+}
+
+String _Answer = "";
+
+class answeremodal extends StatelessWidget {
+  answeremodal(this.yourData);
+
+  final int yourData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RoundedInputField(
+            minline: 1,
+            maxline: 1,
+            icon: Icons.question_answer_outlined,
+            hintText: "Answer",
+            onChanged: (value) => {_Answer = value},
+            //controller: settingsViewModel.ipAddressController)
+          ),
+
+          // SelectableText("Your Phone Id: ${settingsViewModel.macAddress??""}"),
+          const SizedBox(
+            height: 20,
+          ),
+          RoundedButton(
+            press: () {
+              _onsave();
+              Navigator.pop(context);
+            },
+            text: 'Add answer',
+            //: ButtonState.idle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _onsave() {
+    var x = _dbHelper.updateQuestion(yourData, int.parse(_Answer));
     if (x != null) {
       return 1;
     } else {

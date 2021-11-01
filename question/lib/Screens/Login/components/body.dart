@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:question/Screens/Login/components/background.dart';
 import 'package:question/Screens/Login/login_screen.dart';
 import 'package:question/Screens/Signup/signup_screen.dart';
-import 'package:question/Screens/admin.dart';
+import 'package:question/Screens/user.dart';
 import 'package:question/Screens/home.dart';
 import 'package:question/components/already_have_an_account_acheck.dart';
 import 'package:question/components/rounded_button.dart';
@@ -60,7 +60,7 @@ class Body extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return HomePage();
+                        return UserPage();
                       },
                     ),
                   );

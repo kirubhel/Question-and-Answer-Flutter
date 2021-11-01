@@ -229,6 +229,12 @@ class Databasehelper {
     Database db = await database;
     return await db.insert(Question.tblQuestion, q.toMap());
   }
+   Future<int> updateQuestion(int id, int answerID) async {
+    Database db = await database;
+    return await db.update(Question.tblQuestion,{ Question.colAnswerId:answerID},
+    where: '${Question.colId} = ?',
+        whereArgs: [id]);
+  }
 
   Future<int> deleteQuestion(int id) async {
     Database db = await database;
