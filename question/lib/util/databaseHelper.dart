@@ -5,6 +5,7 @@ import 'package:question/models/choicesModel.dart';
 import 'package:question/models/item.dart';
 import 'package:question/models/questionModel.dart';
 import 'package:question/models/subCatagoryModel.dart';
+import 'package:question/models/userAnswer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:io';
@@ -104,6 +105,26 @@ class Databasehelper {
     ${Choise.colQuestionId} INTEGER NOT NULL,
 
     ${Choise.colCreatedDateTime} DATETIME NOT NULL
+    
+  )
+  
+  
+  ''');
+
+  await db.execute('''
+  
+  CREATE TABLE ${UserAnswer.tblUserAnswer}(
+
+    ${UserAnswer.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
+  
+    ${UserAnswer.colUserId} INTEGER NOT NULL,
+    ${UserAnswer.colsubCatagoryId} INTEGER NOT NULL,
+    ${UserAnswer.colrightAnswer} INTEGER NOT NULL,
+    ${UserAnswer.coltotalQuestion} INTEGER NOT NULL,
+    ${UserAnswer.colelapsedTime} REAL NOT NULL,
+    ${UserAnswer.coltakenTime} REAL NOT NULL,
+    
+    ${UserAnswer.colCreatedDateTime} DATETIME NOT NULL
     
   )
   
@@ -267,6 +288,17 @@ class Databasehelper {
         : choices.map((e) => Choise.fromMap(e)).toList();
   }
 
-
+//user answer
+Future<int> insertUserAnswer(UserAnswer UA) async {
+    Database db = await database;
+    return await db.insert(UserAnswer.tblUserAnswer, UA.toMap());
+  }
+  Future<List<UserAnswer>> fetchUserAnser() async {
+    Database db = await database;
+    List<Map> userAnswers = await db.query(UserAnswer.tblUserAnswer);
+    return userAnswers.isEmpty
+        ? []
+        : userAnswers.map((e) => UserAnswer.fromMap(e)).toList();
+  }
 
 }

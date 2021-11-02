@@ -9,8 +9,10 @@ import 'package:question/models/listItem.dart';
 import 'package:question/models/questioanswer.dart';
 import 'package:question/models/questionModel.dart';
 import 'package:question/models/subCatagoryModel.dart';
+import 'package:question/models/userAnswer.dart';
 
 import 'package:question/util/databaseHelper.dart';
+import 'package:question/util/shared_Refernce.dart';
 
 Databasehelper _dbHelper = Databasehelper.instance;
 List<Catagory> _catagory = [];
@@ -22,6 +24,8 @@ List<SubCatagory> categoriesList = [];
 List<Question> _question = [];
 List<Choise> _choice = [];
 
+DateTime? startDate;
+DateTime? endDate;
 List<QuestionAnswer> _questionAnswer = [];
 
 class TakeExam extends StatefulWidget {
@@ -117,8 +121,8 @@ class _TakeExam extends State<TakeExam> {
                                 border: new Border(
                                     right: new BorderSide(
                                         width: 1.0, color: kPrimaryColor))),
-                            child: Icon(Icons.question_answer_outlined,
-                                color: kPrimaryColor),
+                            child:
+                                Icon(Icons.quiz_outlined, color: kPrimaryColor),
                           ),
                           title: Text(
                             _question[index].question.toString(),
@@ -225,7 +229,8 @@ class _TakeExam extends State<TakeExam> {
                     return Padding(
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: resultmodal());
+                        child: resultmodal(
+                            startDate!, _question[0].subCatagoryId!));
                   },
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
@@ -234,7 +239,7 @@ class _TakeExam extends State<TakeExam> {
             },
             color: kPrimaryLightColor,
             icon: const Icon(
-              Icons.add_business_outlined,
+              Icons.directions_transit,
               color: kPrimaryColor,
             ),
           )),
@@ -265,6 +270,7 @@ class _TakeExam extends State<TakeExam> {
   }
 
   refreshContactList() async {
+    startDate = DateTime.now();
     var x = await _dbHelper.fetchQuestion();
     var d = await _dbHelper.fetchChoise();
     setState(() {
@@ -296,13 +302,19 @@ class _TakeExam extends State<TakeExam> {
 }
 
 class resultmodal extends StatelessWidget {
-   int right_question = 0;
+  resultmodal(this.startDate, this.subcatagoryId);
+  int right_question = 0;
   final List<int> wq = [];
   final int totalquestion = _question.length;
-   double elapsedtime=0.0;
+  double elapsedtime = 0.0;
+  final DateTime startDate;
+  final int subcatagoryId;
+  DateTime endDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
+    int difdate = DateTime.now().difference(startDate).inSeconds;
+    double k = difdate / 60;
     for (var i = 0; i < _question.length; i++) {
       for (var j = 0; j < _questionAnswer.length; j++) {
         if (_question[i].id == _questionAnswer[j].questionId &&
@@ -314,18 +326,33 @@ class resultmodal extends StatelessWidget {
       if (_question[i].timeMeasurment == "TimeMeasurment.second") {
         elapsedtime += (_question[i].elapsedTime! / 60);
       } else if (_question[i].timeMeasurment == "TimeMeasurment.hour") {
-        elapsedtime += ( _question[i].elapsedTime! * 60);
+        elapsedtime += (_question[i].elapsedTime! * 60);
       } else {
         elapsedtime += _question[i].elapsedTime!;
       }
     }
+    SharedPreferencesUtil _preferencesUtil = new SharedPreferencesUtil();
+
+    late int _id;
+    _id = _preferencesUtil.getId();
+    UserAnswer useranswer = UserAnswer();
+    useranswer.elapsedTime = elapsedtime;
+    useranswer.takenTime = k;
+    useranswer.rightAnswer = right_question;
+    useranswer.totalQuestion = totalquestion;
+    useranswer.userId = _id;
+    useranswer.subCatagoryId = subcatagoryId;
+    useranswer.createdDate = DateTime.now();
+    _dbHelper.insertUserAnswer(useranswer);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('${right_question} / total: ${totalquestion}'),
-          Text(' total time: ${elapsedtime}'),
+          Text(
+              '${k.toStringAsFixed(2)} minute / total time: ${elapsedtime} minute'),
           // SelectableText("Your Phone Id: ${settingsViewModel.macAddress??""}"),
           const SizedBox(
             height: 20,

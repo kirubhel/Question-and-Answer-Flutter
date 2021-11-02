@@ -13,6 +13,12 @@ class SharedPreferencesUtil{
   SharedPreferencesUtil(){
     initPreference();
   }
+
+   setId(int? id){
+    _preferences!.setInt("id", id!);
+
+  }
+
   setUserName(String? userName){
     _preferences!.setString("userName", userName!);
 
@@ -31,6 +37,13 @@ setUsertype(String? userType){
     _preferences!.setString("userType", userType!);
   }
   
+    int getId(){
+    if(_preferences != null){
+      return _preferences!.getInt('id') ?? 0;
+    }
+    return 0;
+
+  }
   String getUserName(){
     if(_preferences != null){
       return _preferences!.getString('userName') ?? "";

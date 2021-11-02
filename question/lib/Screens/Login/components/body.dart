@@ -145,12 +145,14 @@ class Body extends StatelessWidget {
       return 1;
     }
     if (x[0].userType == UserType.admin) {
+      _preferencesUtil.setId(x[0].id);
       _preferencesUtil.setUserName(x[0].userName);
       _preferencesUtil.setEmail(x[0].email);
       _preferencesUtil.setPassword(x[0].password);
       _preferencesUtil.setUsertype(x[0].userType.toString());
       return 6;
     } else {
+      _preferencesUtil.setId(x[0].id);
       _preferencesUtil.setUserName(x[0].userName);
       _preferencesUtil.setEmail(x[0].email);
       _preferencesUtil.setPassword(x[0].password);
