@@ -8,7 +8,7 @@ class UserAnswer {
   static const coltotalQuestion = 'totalQuestion';
   static const colelapsedTime = 'elapsedTime';
   static const coltakenTime = 'takenTime';
-  static const colCreatedDateTime = 'createdDate';
+  static const colCreatedDateTime = 'createdDate'; 
 
   int? id;
   int? userId;

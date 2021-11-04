@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:question/components/rounded_button.dart';
 import 'package:question/constants.dart';
 import 'package:question/modal/subCatagorymodal.dart';
 import 'package:question/models/item.dart';
@@ -47,7 +48,7 @@ class _SubCatagoryPage extends State<SubCatagoryPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0))));
+                          topRight: Radius.circular(10.0)))).then((value) => setState(() {refreshContactList();}));
             },
             color: kPrimaryLightColor,
             icon: const Icon(
@@ -55,7 +56,9 @@ class _SubCatagoryPage extends State<SubCatagoryPage> {
               color: kPrimaryColor,
             ),
           )),
-      Container(
+      SizedBox(
+            
+          height: MediaQuery.of(context).size.height * 0.675,
           child: RefreshIndicator(
         onRefresh: () => refreshContactList(),
         child: ListView.builder(
@@ -102,7 +105,41 @@ class _SubCatagoryPage extends State<SubCatagoryPage> {
                   trailing: IconButton(
                     icon: Icon(Icons.delete_outline_outlined,
                         color: kPrimaryColor),
-                    onPressed: () => {_ontap(_catagory[index].value)},
+                    onPressed: () async {
+                      int c = await _ontap(_catagory[index].value);
+                                 showDialog(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+
+                    builder: (BuildContext context) {
+                      return new AlertDialog(
+                        title: new Text('Delete Status'),
+                        content: new SingleChildScrollView(
+                          child: new ListBody(
+                            children: [
+                              new Text(c == 999999
+                                  ? 'Error : Question on this SUb Catagory Exist'
+                                 
+                                      : 'Successfully Deleted'),
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          new RoundedButton(
+                            text: "ok",
+                            press: () {
+                              Navigator.pop(
+                                context,
+                                
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+              
+                           },
                   ),
                   onTap: () => {},
                 ),
@@ -114,9 +151,10 @@ class _SubCatagoryPage extends State<SubCatagoryPage> {
     ]));
   }
 
-  _ontap(id) async {
-    await _dbHelper.deleteSubCatagory(id);
+  Future<int> _ontap(id) async {
+    var x = await _dbHelper.deleteSubCatagory(id);
     refreshContactList();
+    return x;
   }
 
   refreshContactList() async {

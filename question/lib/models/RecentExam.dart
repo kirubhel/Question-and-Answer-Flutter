@@ -1,5 +1,6 @@
 class RecentExam {
   int? value;
+  int ?userId;
   String? UserName;
   String? SubcatagoryName;
   int? rightAnswer;
@@ -11,6 +12,7 @@ class RecentExam {
   RecentExam(
       this.value,
       this.UserName,
+      
       this.SubcatagoryName,
       this.rightAnswer,
       this.totalQuestion,
@@ -20,11 +22,13 @@ class RecentExam {
 
   RecentExam.fromMap(Map<dynamic, dynamic> map) {
     value = map['id'];
+    userId=map['userId'];
+    UserName= map['userName'];
     SubcatagoryName = map['subCatagoryName'];
     rightAnswer = map['rightAnswer'];
     totalQuestion = map['totalQuestion'];
     estimatedTime = map['elapsedTime'];
     takenTime = map['takenTime'];
-    creatdatetime = DateTime.parse(map['createdDate']);
+    creatdatetime = map['createdDate']!=null? DateTime.parse(map['createdDate']):DateTime.now();
   }
 }

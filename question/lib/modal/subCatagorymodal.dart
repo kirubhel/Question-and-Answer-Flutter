@@ -28,8 +28,15 @@ class _subcatagorymodal extends State<subcatagorymodal> {
   @override
   void initState() {
     super.initState();
+
+
+  new Future<List<Catagory>>.delayed(new Duration(seconds: 2), ()=> _catfetch()  ).then((value) {
+
+        categoriesList = value;
+
+
     setState(() {
-      _catfetch();
+     
 
       for (var d in categoriesList) {
         ListItem k = new ListItem(d.id!, d.catagoryName!);
@@ -40,6 +47,7 @@ class _subcatagorymodal extends State<subcatagorymodal> {
 
       ;
     });
+  });
   }
 
   @override
@@ -94,10 +102,10 @@ class _subcatagorymodal extends State<subcatagorymodal> {
     );
   }
 
-  _catfetch() async {
+ Future<List<Catagory>> _catfetch() async {
     _dropdownItems = [ListItem(0, "Select Catagory")];
     Future<List<Catagory>> _categoriesLists = _dbHelper.fetchCatagory();
-    categoriesList = await _categoriesLists;
+    return _categoriesLists;
   }
 
   List<DropdownMenuItem<ListItem>> buildDropDownMenuItems(List listItems) {

@@ -47,6 +47,9 @@ class _UserListPage extends State<UserListPage> {
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold),
                           ))),
+                              SizedBox(
+          height: MediaQuery.of(context).size.height * 0.675,
+          child:
                   ListView.builder(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     scrollDirection: Axis.vertical,
@@ -98,7 +101,7 @@ class _UserListPage extends State<UserListPage> {
                         ),
                       );
                     },
-                  ),
+                  )),
                 ]))));
   }
 

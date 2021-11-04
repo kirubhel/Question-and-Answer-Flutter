@@ -55,7 +55,7 @@ class _QuestionPage extends State<QuestionPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0))));
+                          topRight: Radius.circular(10.0)))).then((value) => setState(() {refreshContactList();}));
             },
             color: kPrimaryLightColor,
             icon: const Icon(
@@ -140,27 +140,148 @@ class _QuestionPage extends State<QuestionPage> {
                                       style: TextStyle(color: kPrimaryColor))
                                 ],
                               ),
-                              trailing: IconButton(
-                                icon: Icon(Icons.add_box_outlined,
-                                    color: kPrimaryColor),
-                                onPressed: () => {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets
-                                                    .bottom),
-                                            child: new choicemodal(
-                                                _question[index].id!));
-                                      },
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10.0),
-                                              topRight: Radius.circular(10.0))))
-                                },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.add_box_outlined,
+                                        color: kPrimaryColor),
+                                    onPressed: () => {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                            .viewInsets
+                                                            .bottom),
+                                                child: new choicemodal(
+                                                    _question[index].id!));
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(10.0),
+                                                  topRight:
+                                                      Radius.circular(10.0)))).then((value) => setState(() {refreshContactList();}))
+                                    },
+                                  ),
+                                  Text(
+                                    "|",
+                                    style: TextStyle(color: kPrimaryColor),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit_outlined,
+                                        color: kPrimaryColor),
+                                    onPressed: () {
+ showModalBottomSheet(
+
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                            .viewInsets
+                                                            .bottom),
+                                                child: new updateQuestion(
+                                                    _question[index].id!));
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(10.0),
+                                                  topRight:
+                                                      Radius.circular(10.0)))).then((value) => setState(() {
+                                                        
+                                                             showDialog(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+
+                builder: (BuildContext context) {
+                  return new AlertDialog(
+                    title: new Text('Update Status',
+                        style: TextStyle(color: kPrimaryColor)),
+                    content: new SingleChildScrollView(
+                      child: new ListBody(
+                        children: [
+                          new Text('Successfully Updated',
+                              style: TextStyle(color: kPrimaryColor)),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      new RoundedButton(
+                        text: "ok",
+                        press: () {
+                          Navigator.pop(
+                            context,
+                          )
+                          ;
+                           refreshContactList();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+          
+                                                        
+                                                        
+                                                        
+                                                       }));
+                                                 
+                                    },
+                                  ),
+                                  Text(
+                                    "|",
+                                    style: TextStyle(color: kPrimaryColor),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete_outline_outlined,
+                                        color: kPrimaryColor),
+                                    onPressed: () {
+                                      _deleteQuestion(_question[index].id);
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible:
+                                            false, // user must tap button!
+
+                                        builder: (BuildContext context) {
+                                          return new AlertDialog(
+                                            title: new Text('Delete Status',
+                                                style: TextStyle(
+                                                    color: kPrimaryColor)),
+                                            content: new SingleChildScrollView(
+                                              child: new ListBody(
+                                                children: [
+                                                  new Text(
+                                                      'Successfully Deleted',
+                                                      style: TextStyle(
+                                                          color:
+                                                              kPrimaryColor)),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: [
+                                              new RoundedButton(
+                                                text: "ok",
+                                                press: () {
+                                                  Navigator.pop(
+                                                    context,
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  )
+                                ],
                               ),
                               onTap: () => {
                                 showModalBottomSheet(
@@ -178,7 +299,7 @@ class _QuestionPage extends State<QuestionPage> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10.0),
-                                            topRight: Radius.circular(10.0))))
+                                            topRight: Radius.circular(10.0)))).then((value) => setState(() {refreshContactList();}))
                               },
                             ),
                           ),
@@ -247,7 +368,7 @@ class _QuestionPage extends State<QuestionPage> {
             ),
           )))
     ]));
-    ;
+    
   }
 
   _ontap(id) async {
@@ -257,6 +378,11 @@ class _QuestionPage extends State<QuestionPage> {
 
   _deletechoice(id) async {
     await _dbHelper.deleteChoise(id);
+    refreshContactList();
+  }
+
+  _deleteQuestion(id) async {
+    await _dbHelper.deleteQuestion(id);
     refreshContactList();
   }
 
@@ -372,6 +498,58 @@ class answeremodal extends StatelessWidget {
 
   _onsave() {
     var x = _dbHelper.updateQuestion(yourData, int.parse(_Answer));
+    if (x != null) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+}
+
+String _que = "";
+
+class updateQuestion extends StatelessWidget {
+  updateQuestion(this.yourData);
+
+  final int yourData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RoundedInputField(
+            minline: 3,
+            maxline: 3,
+            icon: Icons.question_answer_outlined,
+            hintText: "Question",
+
+            onChanged: (value) => {_que = value},
+            //controller: settingsViewModel.ipAddressController)
+          ),
+
+          // SelectableText("Your Phone Id: ${settingsViewModel.macAddress??""}"),
+          const SizedBox(
+            height: 20,
+          ),
+          RoundedButton(
+            press: () {
+              _onsave();
+
+              Navigator.pop(context);
+           },
+            text: 'Edit question',
+            //: ButtonState.idle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _onsave() {
+    var x = _dbHelper.updateQuestionque(yourData, _que);
     if (x != null) {
       return 1;
     } else {

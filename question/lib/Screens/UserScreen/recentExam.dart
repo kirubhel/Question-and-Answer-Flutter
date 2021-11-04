@@ -2,19 +2,21 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:question/models/RecentExam.dart';
 import 'package:question/models/userModel.dart';
 import 'package:question/util/databaseHelper.dart';
 import 'package:intl/intl.dart';
+import 'package:question/util/shared_Refernce.dart';
 import '../../constants.dart';
 
 Databasehelper _dbHelper = Databasehelper.instance;
-List<User> _users = [];
+List<RecentExam> _uExam = [];
 
-class RecentExam extends StatefulWidget {
-  State<RecentExam> createState() => _RecentExam();
+class RecentExamPage extends StatefulWidget {
+  State<RecentExamPage> createState() => _RecentExamPage();
 }
 
-class _RecentExam extends State<RecentExam> {
+class _RecentExamPage extends State<RecentExamPage> {
   @override
   void initState() {
     super.initState();
@@ -47,11 +49,15 @@ class _RecentExam extends State<RecentExam> {
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold),
                           ))),
+                          SizedBox(
+            
+          height: MediaQuery.of(context).size.height * 0.675,
+          child:
                   ListView.builder(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: _users.length,
+                    itemCount: _uExam.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         elevation: 8.0,
@@ -72,7 +78,7 @@ class _RecentExam extends State<RecentExam> {
                                   color: kPrimaryColor),
                             ),
                             title: Text(
-                              _users[index].userName.toString(),
+                              _uExam[index].UserName.toString(),
                               style: TextStyle(
                                   color: kPrimaryColor,
                                   fontWeight: FontWeight.bold),
@@ -82,13 +88,17 @@ class _RecentExam extends State<RecentExam> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(_users[index].email.toString(),
+                                Text(_uExam[index].SubcatagoryName.toString(),
+                                    style: TextStyle(color: kPrimaryColor)),
+                                    Text("${_uExam[index].rightAnswer.toString()} / ${_uExam[index].totalQuestion.toString()}",
+                                    style: TextStyle(color: kPrimaryColor)),
+                                       Text("estimated : ${_uExam[index].estimatedTime!.toStringAsFixed(2)} minute | elapsed : ${_uExam[index].takenTime!.toStringAsFixed(2)} minute",
                                     style: TextStyle(color: kPrimaryColor)),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                       DateFormat('yyyy-MM-dd – kk:mm')
-                                          .format(_users[index].createdDate!)
+                                          .format(_uExam[index].creatdatetime!)
                                           .toString(),
                                       style: TextStyle(color: kPrimaryColor)),
                                 )
@@ -98,14 +108,17 @@ class _RecentExam extends State<RecentExam> {
                         ),
                       );
                     },
-                  ),
+                  )),
                 ]))));
   }
 
   _refreshContactList() async {
-    List<User> x = await _dbHelper.fetchUsers();
+     SharedPreferencesUtil _preferencesUtil = new SharedPreferencesUtil();
+    int _id = _preferencesUtil.getId();
+
+    List<RecentExam> x = await _dbHelper.fetchUserAnswer();
     setState(() {
-      _users = x;
+      _uExam = x.where((element) => element.userId==_id).toList();
     });
   }
 }

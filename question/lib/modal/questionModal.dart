@@ -37,8 +37,14 @@ class _questionModal extends State<questionModal> {
   @override
   void initState() {
     super.initState();
-    setState(() {
       _catfetch();
+
+
+       new Future<List<SubCatagory>>.delayed(new Duration(seconds: 2), ()=> _catfetch()  ).then((value) {
+
+        categoriesList =value;
+    setState(() {
+    
 
       for (var d in categoriesList) {
         ListItem k = new ListItem(d.id!, d.subCatagoryName!);
@@ -51,10 +57,13 @@ class _questionModal extends State<questionModal> {
       _selectedItem2 = _dropdownMenuItems2[0].value;
       ;
     });
+       });
   }
 
   @override
   Widget build(BuildContext context) {
+      _catfetch();
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
       child: Column(
@@ -135,10 +144,10 @@ class _questionModal extends State<questionModal> {
     );
   }
 
-  _catfetch() async {
+  Future<List<SubCatagory>> _catfetch() async {
     _dropdownItems = [ListItem(0, "Select Sub Catagory")];
     Future<List<SubCatagory>> _categoriesLists = _dbHelper.fetchSCatagory();
-    categoriesList = await _categoriesLists;
+    return _categoriesLists;
   }
 
   List<DropdownMenuItem<ListItem>> buildDropDownMenuItems(List listItems) {

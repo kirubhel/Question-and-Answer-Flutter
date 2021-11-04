@@ -11,7 +11,7 @@ class UserPage extends StatefulWidget {
   UserPage({Key? key}) : super(key: key);
  final List<Widget> _widgetOptions = [
     TakeExam(),
-    RecentExam(),
+    RecentExamPage(),
   
   ];
   @override

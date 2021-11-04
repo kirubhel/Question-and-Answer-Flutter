@@ -17,7 +17,7 @@ int? id ;
 int ? questionId ;
 String ? choise ;
 DateTime ? createdDate;
-
+bool  selected =false;
 
   Choise.fromMap (Map<dynamic,dynamic> map){
 

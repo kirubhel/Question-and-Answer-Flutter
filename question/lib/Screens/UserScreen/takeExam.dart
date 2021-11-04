@@ -33,17 +33,29 @@ class TakeExam extends StatefulWidget {
 }
 
 class _TakeExam extends State<TakeExam> {
+
   @override
   void initState() {
+   
     super.initState();
+
+    new Future<List<SubCatagory>>.delayed(new Duration(seconds: 2), ()=> _catfetch()  ).then((value) {
+
+         categoriesList = value;
+
+
     setState(() {
-      _catfetch();
+        
+      _question = [];
+    _questionAnswer= [];
+    
       for (var d in categoriesList) {
         ListItem k = new ListItem(d.id!, d.subCatagoryName!);
         _dropdownItems.add(k);
       }
       _dropdownMenuItems = buildDropDownMenuItems(_dropdownItems);
       _selectedItem = _dropdownMenuItems[0].value;
+    });
     });
   }
 
@@ -95,9 +107,10 @@ class _TakeExam extends State<TakeExam> {
               ),
             ],
           )),
+          
       Container(
           child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.625,
+        height: MediaQuery.of(context).size.height * 0.5,
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
@@ -170,6 +183,7 @@ class _TakeExam extends State<TakeExam> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index2) {
+  
                             return Card(
                                 elevation: 8.0,
                                 margin: new EdgeInsets.symmetric(
@@ -178,8 +192,9 @@ class _TakeExam extends State<TakeExam> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: kPrimaryLightColor),
+                                          color: _question[index].choices![index2].selected ? kPrimaryColor : kPrimaryLightColor),
                                       child: ListTile(
+                                        
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 20.0, vertical: 10.0),
                                         leading: Container(
@@ -188,21 +203,22 @@ class _TakeExam extends State<TakeExam> {
                                               border: new Border(
                                                   right: new BorderSide(
                                                       width: 1.0,
-                                                      color: kPrimaryColor))),
+                                                      color: _question[index].choices![index2].selected ? Colors.white : kPrimaryColor))),
                                           child: Text((index2 + 1).toString(),
                                               style: TextStyle(
-                                                  color: kPrimaryColor)),
+                                                  color: _question[index].choices![index2].selected ? Colors.white : kPrimaryColor)),
                                         ),
                                         title: Text(
                                           _question[index]
                                               .choices![index2]
                                               .choise
                                               .toString(),
-                                          style: const TextStyle(
-                                              color: kPrimaryColor,
+                                          style:  TextStyle(
+                                              color: _question[index].choices![index2].selected? Colors.white:kPrimaryColor,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         onTap: () => {
+                                  setState(() => _question[index].choices![index2].selected=!_question[index].choices![index2].selected),
                                           setAnswer(
                                               _question[index].id!, index2 + 1)
                                         },
@@ -263,21 +279,27 @@ class _TakeExam extends State<TakeExam> {
     var x = await _dbHelper.deleteCatagory(id);
   }
 
-  _catfetch() async {
+  Future<List<SubCatagory>>  _catfetch() async {
     _dropdownItems = [ListItem(0, "Select Sub Catagory")];
     Future<List<SubCatagory>> _categoriesLists = _dbHelper.fetchSCatagory();
-    categoriesList = await _categoriesLists;
+   return _categoriesLists;
   }
 
   refreshContactList() async {
     startDate = DateTime.now();
     var x = await _dbHelper.fetchQuestion();
     var d = await _dbHelper.fetchChoise();
+    List<Choise>f=[];
+    for (var n in d){
+      var g =n;
+      g.selected=false;
+      f.add(g);
+    }
     setState(() {
       _question = [];
       for (var g in x) {
         var b = g;
-        b.choices = d.where((f) => f.questionId == g.id).toList();
+        b.choices = f.where((f) => f.questionId == g.id).toList();
         _question.add(b);
       }
 

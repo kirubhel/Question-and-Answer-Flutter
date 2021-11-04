@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:question/components/rounded_button.dart';
 import 'package:question/constants.dart';
 import 'package:question/modal/catagorymodal.dart';
 import 'package:question/models/catagoryModel.dart';
@@ -55,7 +56,7 @@ class _CatagoryPage extends State<CatagoryPage> {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(10.0),
-                              topRight: Radius.circular(10.0))));
+                              topRight: Radius.circular(10.0)))).then((value) => setState(() {refreshContactList();}));
                 },
                 color: kPrimaryLightColor,
                 icon: const Icon(
@@ -63,7 +64,9 @@ class _CatagoryPage extends State<CatagoryPage> {
                   color: kPrimaryColor,
                 ),
               )),
-         
+             SizedBox(
+          height: MediaQuery.of(context).size.height * 0.675,
+          child:
             RefreshIndicator(
                 onRefresh: () => refreshContactList(),
               child:  ListView.builder(
@@ -102,21 +105,59 @@ class _CatagoryPage extends State<CatagoryPage> {
                           style: TextStyle(color: kPrimaryColor)),
                       trailing:  
                       IconButton(
-                        icon: Icon( Icons.delete_outline_outlined ,color: kPrimaryColor),onPressed: ()=>{_ontap(_catagory[index].id)}, ),
+                        icon: Icon( Icons.delete_outline_outlined ,color: kPrimaryColor),onPressed: () async{
+                          
+                          int c = await _ontap(_catagory[index].id);
+                                 showDialog(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+
+                    builder: (BuildContext context) {
+                      return new AlertDialog(
+                        title: new Text('Delete Status',style: TextStyle(color: kPrimaryColor)),
+                        content: new SingleChildScrollView(
+                          child: new ListBody(
+                            children: [
+                              new Text(c == 999999
+                                  ? 'Error : Sub catagory on this Catagory Exist'
+                                 
+                                      : 'Successfully Deleted',style: TextStyle(color: kPrimaryColor)),
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          new RoundedButton(
+                            text: "ok",
+                            press: () {
+                              Navigator.pop(
+                                context,
+                                
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+              
+                          
+                          }, ),
                       onTap: () => {},
                     ),
                   ),
                 );
               },
             )
-            ),
+            )),
           
         ]));
   }
 
-  _ontap(id) async {
+ Future <int> _ontap(id) async {
     var x = await _dbHelper.deleteCatagory(id);
+
     refreshContactList();
+        return x;
   }
 
   refreshContactList() async {

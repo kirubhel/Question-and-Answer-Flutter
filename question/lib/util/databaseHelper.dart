@@ -1,4 +1,5 @@
 import 'package:path_provider/path_provider.dart';
+import 'package:question/models/RecentExam.dart';
 import 'package:question/models/answerModel.dart';
 import 'package:question/models/catagoryModel.dart';
 import 'package:question/models/choicesModel.dart';
@@ -183,12 +184,22 @@ class Databasehelper {
 
   Future<int> deleteCatagory(int id) async {
     Database db = await database;
+
+
+var k  = await db.query( SubCatagory.tblSubCatagory,
+where: '${SubCatagory.colCatagoryId}=?',whereArgs: [id]);
+
+if (k.isEmpty){
+
     return await db.delete(Catagory.tblCatagory,
         where: '${Catagory.colId}=?', whereArgs: [id]);
+}
+else{return 999999;}
   }
 
   Future<List<Catagory>> fetchCatagory() async {
     Database db = await database;
+    
     List<Map> catagories = await db.query(Catagory.tblCatagory);
     return catagories.isEmpty
         ? []
@@ -204,8 +215,15 @@ class Databasehelper {
 
   Future<int> deleteSubCatagory(int id) async {
     Database db = await database;
+
+    var k  = await db.query( Question.tblQuestion,
+where: '${Question.colsubCatagoryId}=?',whereArgs: [id]);
+
+if (k.isEmpty){
+
     return await db.delete(SubCatagory.tblSubCatagory,
         where: '${SubCatagory.colId}=?', whereArgs: [id]);
+}else{return 999999;}
   }
 
   Future<List<Item>> fetchSubCatagory() async {
@@ -256,9 +274,33 @@ class Databasehelper {
     where: '${Question.colId} = ?',
         whereArgs: [id]);
   }
+    Future<int> updateQuestionque(int id, String que) async {
+    Database db = await database;
+    return await db.update(Question.tblQuestion,{ Question.colQuesiton:que},
+    where: '${Question.colId} = ?',
+        whereArgs: [id]);
+  }
+
 
   Future<int> deleteQuestion(int id) async {
     Database db = await database;
+
+   var choices = await db.query(Choise.tblChoice,where: '${Choise.colQuestionId}=?',
+   whereArgs: [id]
+   );
+  List<Choise> k= choices.isEmpty
+        ? []
+        : choices.map((e) => Choise.fromMap(e)).toList();
+
+   if (!k.isEmpty){
+     for (var c in k ){
+       deleteChoise(c.id!);
+     }
+   }
+
+
+
+
     return await db.delete(Question.tblQuestion,
         where: '${Question.colId}=?', whereArgs: [id]);
   }
@@ -293,12 +335,47 @@ Future<int> insertUserAnswer(UserAnswer UA) async {
     Database db = await database;
     return await db.insert(UserAnswer.tblUserAnswer, UA.toMap());
   }
-  Future<List<UserAnswer>> fetchUserAnser() async {
+  Future<List<RecentExam>> fetchUserAnswer() async {
     Database db = await database;
-    List<Map> userAnswers = await db.query(UserAnswer.tblUserAnswer);
-    return userAnswers.isEmpty
-        ? []
-        : userAnswers.map((e) => UserAnswer.fromMap(e)).toList();
+  String userId = "${User.colId}";
+    String userId2 = "${User.tblUser}"+"." + "${User.colId}";
+  String userName = "${User.colUserName}";
+  String SubcatagoryId = "${SubCatagory.colId}";
+  String SubcatagoryId2 = "${SubCatagory.tblSubCatagory}"+"."+ "${SubCatagory.colId}";
+  String subCatagoryName = "${SubCatagory.colSubCatagoryName}";
+
+
+  String UserAnswerId = "${UserAnswer.colId}";
+ 
+  String  useransweruserid  ="${UserAnswer.colUserId}";
+  String  useransweruserid2  = "${UserAnswer.tblUserAnswer}"+"."+"${UserAnswer.colUserId}";
+  
+  String subCatagoryUserID ="${UserAnswer.colsubCatagoryId}";
+  String subCatagoryUserID2 ="${UserAnswer.tblUserAnswer}"+"."+"${UserAnswer.colsubCatagoryId}";
+
+  String rightAnswer = "${UserAnswer.colrightAnswer}";
+  String totalQuestion = "${UserAnswer.coltotalQuestion}";
+  String estimatedTime = "${UserAnswer.colelapsedTime}";
+  String takenTime = "${UserAnswer.coltakenTime}";
+  String date ="${UserAnswer.colCreatedDateTime}"+"."+ "${UserAnswer.colCreatedDateTime}";
+  
+  
+      String query =
+        // ignore: unnecessary_brace_in_string_interps
+        'SELECT  ${rightAnswer}, ${totalQuestion}, ${estimatedTime},${takenTime},${userName},${subCatagoryName},${useransweruserid} FROM ${UserAnswer.tblUserAnswer} INNER JOIN ${SubCatagory.tblSubCatagory} ON  ${SubcatagoryId2} = ${subCatagoryUserID2} INNER JOIN ${User.tblUser} ON  ${userId2} = ${useransweruserid2} ';
+
+List<RecentExam> list = [];
+    List<Map<String, dynamic>> dbListsubCatagories = await db.rawQuery('${query}');
+
+dbListsubCatagories.forEach((itemMap) {
+      list.add(RecentExam.fromMap(itemMap));
+    });
+
+    return list;
+
+   ;
   }
+
+
 
 }
