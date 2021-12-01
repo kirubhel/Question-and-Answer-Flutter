@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:question/Screens/Login/login_screen.dart';
 import 'package:question/Screens/Signup/components/background.dart';
@@ -65,7 +66,7 @@ class Body extends StatelessWidget {
             RoundedButton(
               text: "SIGNUP",
               press: () {
-              var c =  _onSubmit();
+                var c = _onSubmit();
 
                 showDialog(
                   context: context,
@@ -77,8 +78,13 @@ class Body extends StatelessWidget {
                       content: new SingleChildScrollView(
                         child: new ListBody(
                           children: [
-                            
-                            new Text(c==2? 'You have successfully SignedUp':c==0?'password dont match':c==4?'password must be at least 8 character':'an error has occured'),
+                            new Text(c == 2
+                                ? 'You have successfully SignedUp'
+                                : c == 0
+                                    ? 'password dont match'
+                                    : c == 4
+                                        ? 'password must be at least 8 character'
+                                        : 'an error has occured'),
                           ],
                         ),
                       ),
@@ -90,8 +96,9 @@ class Body extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  
-                                  return c==2?LoginScreen():SignUpScreen();
+                                  return c == 2
+                                      ? LoginScreen()
+                                      : SignUpScreen();
                                 },
                               ),
                             );
@@ -143,12 +150,11 @@ class Body extends StatelessWidget {
 
   int _onSubmit() {
     int? f = _password?.length;
-    if (_password != _confirmPassword  ) {
+    if (_password != _confirmPassword) {
       return 0;
-    } 
-    else if (f! < 8){
+    } else if (f! < 8) {
       return 4;
-    }else if (_userName != null && _email != null && _userName != null) {
+    } else if (_userName != null && _email != null && _userName != null) {
       _user.userName = _userName;
 
       _user.email = _email;
@@ -156,12 +162,18 @@ class Body extends StatelessWidget {
       _user.createdDate = DateTime.now();
       _user.userType = UserType.user;
 
-      var x = _dbHelper?.insertuser(_user);
-      if (x != null) {
-        return 2;
-      } else {return 3;}
+      //var x = _dbHelper?.insertuser(_user);
 
-      
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection('Users');
+
+      collectionReference.add(_user.toMap());
+
+      if (true) {
+        return 2;
+      } else {
+        return 3;
+      }
     } else {
       return 1;
     }
