@@ -150,15 +150,10 @@ class Body extends StatelessWidget {
 
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    final users = allData.map((e) => User.fromMap(e)).toList();
+  
 
-    print(allData);
-
-    var y = allData
-        .where((element) =>
-            (element[0] == _email || element[2] == _email) &&
-            element[4] == _password)
-        .toList();
-    var x = await _dbhelper.userLogin(_email, _password);
+    var x = users.where((element) => (element.email==_email||element.userName==_email)&&element.password==_password).toList();
     if (x.isEmpty) {
       return 1;
     }

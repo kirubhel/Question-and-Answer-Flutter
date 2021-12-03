@@ -148,7 +148,7 @@ class Body extends StatelessWidget {
     );
   }
 
-  int _onSubmit() {
+  Future<int> _onSubmit() async {
     int? f = _password?.length;
     if (_password != _confirmPassword) {
       return 0;
@@ -166,14 +166,26 @@ class Body extends StatelessWidget {
 
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('Users');
+      QuerySnapshot querySnapshot = await collectionReference.get();
 
-      collectionReference.add(_user.toMap());
-
-      if (true) {
-        return 2;
-      } else {
-        return 3;
+      // Get data from docs and convert map to List
+      final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+      final users = allData.map((e) => User.fromMap(e)).toList();
+      if (users != null && users.isNotEmpty) {
+        dynamic max = users.first;
+        users.forEach((e) {
+          if (e.id! > max.id) max = e;
+        });
+        _user.id = max.id+1;
       }
+
+     var n= collectionReference.add(_user.toMap());
+
+      // if (true) {
+        return 2;
+      // } else {
+      //   return 3;
+      // }
     } else {
       return 1;
     }
