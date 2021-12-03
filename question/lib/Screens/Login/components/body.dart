@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:question/Screens/Login/components/background.dart';
 import 'package:question/Screens/Login/login_screen.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:question/models/userModel.dart';
 import 'package:question/util/databaseHelper.dart';
 import 'package:question/util/shared_Refernce.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Body extends StatelessWidget {
   Body({
@@ -40,7 +42,7 @@ class Body extends StatelessWidget {
             ),
             SizedBox(height: size.height * 0.03),
             RoundedInputField(
-              hintText: "Your Email",
+              hintText: "Username or Email",
               onChanged: (value) {
                 _email = value;
               },
@@ -87,7 +89,7 @@ class Body extends StatelessWidget {
                               new Text(c == 0
                                   ? 'username or password field is empty'
                                   : c == 1
-                                      ? 'username or password dosent match'
+                                      ? 'Username or Password dosen\'t match'
                                       : 'an error has occured'),
                             ],
                           ),
@@ -140,6 +142,22 @@ class Body extends StatelessWidget {
       return 0;
     }
 
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('Users');
+
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await collectionReference.get();
+
+    // Get data from docs and convert map to List
+    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    print(allData);
+
+    var y = allData
+        .where((element) =>
+            (element[0] == _email || element[2] == _email) &&
+            element[4] == _password)
+        .toList();
     var x = await _dbhelper.userLogin(_email, _password);
     if (x.isEmpty) {
       return 1;
